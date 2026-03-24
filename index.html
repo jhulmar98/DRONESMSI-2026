@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ================= META ================= -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- ================= TÍTULO ================= -->
+  <title>Escuadrón de Drones</title>
+
+  <!-- ================= ESTILOS ================= -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ================= ICONOS ================= -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <!-- ================= MAPA (LEAFLET) ================= -->
+  <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+
+<body>
+<script>
+  const user = localStorage.getItem("user");
+
+  if (!user) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<div class="app">
+
+  <!-- =========================================================
+       🧭 HEADER / BARRA SUPERIOR
+       ========================================================= -->
+  <header class="topbar">
+
+    <!-- 🔷 LOGO + NOMBRE -->
+    <div class="brand">
+      <i class="fa-solid fa-helicopter"></i>
+      <div>
+        <h1>ESCUADRÓN DE DRONES</h1>
+        <span>Sistema de gestión de misiones aéreas</span>
+      </div>
+    </div>
+
+    <!-- 🔘 ACCIONES -->
+    <div class="topbar-actions">
+     <button id="btnExportar" class="btn btn-export">
+      <i class="fa-solid fa-file-export"></i> Exportar
+    </button>
+
+    <button id="btnSalir" class="btn btn-danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Salir
+    </button>
+    </div>
+
+  </header>
+   <!-- =========================================================
+       linea de progreso de carga de exportacion
+       ========================================================= -->
+  <div id="exportProgressContainer" style="display:none; margin:10px 20px;">
+    <div style="background:#e5e7eb; border-radius:8px; overflow:hidden;">
+      <div id="exportProgressBar" 
+          style="width:0%; height:10px; background:#1d4e89; transition:0.3s;"></div>
+    </div>
+    <small id="exportText">Preparando exportación...</small>
+  </div>
+
+  <!-- =========================================================
+       📊 KPIs (RESUMEN GENERAL)
+       ========================================================= -->
+  <section class="kpis">
+
+    <!-- 🔹 MISIONES HOY -->
+    <div class="kpi-card">
+      <h3>Misiones de Hoy</h3>
+      <p id="kpiHoy">0</p>
+    </div>
+
+    <!-- 🔹 TOTAL MISIONES -->
+    <div class="kpi-card">
+      <h3>Total de Misiones</h3>
+      <p id="kpiTotal">0</p>
+    </div>
+
+    <!-- 🔹 TIEMPO DE VUELO -->
+    <div class="kpi-card">
+      <h3>Tiempo de Vuelo Hoy</h3>
+      <p id="kpiTiempo">0 h 0 min</p>
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       🧩 CONTENIDO PRINCIPAL (GRID)
+       ========================================================= -->
+  <section class="main-grid">
+
+    <!-- =======================================================
+         🟦 PANEL IZQUIERDO
+         ======================================================= -->
+    <div class="left">
+
+      <!-- ================= REPORTE POR PILOTO ================= -->
+      <div class="panel">
+        <h2><i class="fa-solid fa-chart-line"></i> Reporte por Piloto</h2>
+
+        <div class="pilot-grid">
+
+          <!-- 🔹 PILOTO 1 -->
+          <div class="pilot-card">
+            <h3>Fernando Brusco</h3>
+            <p>0 misiones</p>
+            <span>0 h 0 min</span>
+          </div>
+
+          <!-- 🔹 PILOTO 2 -->
+          <div class="pilot-card">
+            <h3>Julio Callan</h3>
+            <p>0 misiones</p>
+            <span>0 h 0 min</span>
+          </div>
+
+          <!-- 🔹 PILOTO 3 -->
+          <div class="pilot-card">
+            <h3>Jhulmar Márquez</h3>
+            <p>0 misiones</p>
+            <span>0 h 0 min</span>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- ================= MAPA ================= -->
+      <div class="panel">
+
+        <h2><i class="fa-solid fa-map"></i> Mapa de Colegios</h2>
+
+        <!-- 🗺️ CONTENEDOR DEL MAPA -->
+        <div id="map"></div>
+
+        
+
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         🟥 PANEL DERECHO (FORMULARIO)
+         ======================================================= -->
+    
+      <div class="right">
+
+        <div class="panel">
+
+          <h2><i class="fa-solid fa-plus"></i> Nueva Misión</h2>
+
+          <!-- ================= FORMULARIO ================= -->
+          <form id="formMision">
+
+            <!-- 🔹 TIPO DE MISIÓN -->
+            <div class="form-group">
+              <label>Misión</label>
+              <select id="tipoMision" required>
+                <option value="">Seleccione</option>
+                <option value="colegio">Colegio Seguro</option>
+                <option value="iglesia">Iglesia Segura</option>
+                <option value="patrullaje">Patrullaje</option>
+                <option value="trafico">Tráfico</option>
+                <option value="emergencia">Emergencias</option>
+              </select>
+            </div>
+
+            <!-- 🔹 SECTOR -->
+            <div class="form-group" id="grupoSector" style="display:none;">
+              <label>Sector</label>
+              <select id="sector">
+                <option value="">Seleccione</option>
+                <option>Sector 1</option>
+                <option>Sector 2</option>
+                <option>Sector 3</option>
+                <option>Sector 4</option>
+                <option>Sector 5</option>
+              </select>
+            </div>
+
+            <!-- 🔹 DIRECCIÓN -->
+            <div class="form-group full" id="grupoDireccion" style="display:none;">
+              <label>Dirección</label>
+              <input type="text" id="direccion" placeholder="Ingrese dirección">
+            </div>
+            <!-- 🔹 COLEGIOS (BUSCADOR) -->
+            <div class="form-group full" id="grupoColegio" style="display:none;">
+              <label>Colegio</label>
+              <input type="text" id="buscarColegio" placeholder="Buscar colegio...">
+              <select id="listaColegios" size="5"></select>
+            </div>
+            <!-- 🔹 SUBTIPO EMERGENCIA -->
+            <div class="form-group" id="grupoSubtipo" style="display:none;">
+              <label>Subtipo Emergencia</label>
+              <select id="subtipo">
+                <option value="">Seleccione</option>
+                <option>Choque</option>
+                <option>Despiste</option>
+                <option>Incendio</option>
+                <option>Otros</option>
+              </select>
+            </div>
+
+            <!-- 🔹 MOTIVO -->
+            <div class="form-group full" id="grupoMotivo" style="display:none;">
+              <label>Motivo</label>
+              <input type="text" id="motivo" placeholder="Motivo de la misión">
+            </div>
+
+            <!-- 🔹 DETALLE (SOLO SI SUBTIPO = OTROS) -->
+            <div class="form-group full" id="grupoDetalle" style="display:none;">
+              <label>Detalle</label>
+              <input type="text" id="detalle" placeholder="Especifique detalle">
+            </div>
+
+            <!-- 🔹 PILOTOS -->
+            <div class="form-group full">
+              <label>Pilotos</label>
+
+              <div class="checkbox-group" id="pilotos">
+
+                <label class="check-item">
+                  <input type="checkbox" value="Fernando Brusco">
+                  <span>Fernando Brusco</span>
+                </label>
+
+                <label class="check-item">
+                  <input type="checkbox" value="Julio Callan">
+                  <span>Julio Callan</span>
+                </label>
+
+                <label class="check-item">
+                  <input type="checkbox" value="Jhulmar Márquez">
+                  <span>Jhulmar Márquez</span>
+                </label>
+
+              </div>
+            </div>
+
+            <!-- 🔹 DRONES -->
+            <div class="form-group full">
+              <label>Drones</label>
+
+              <div class="checkbox-group" id="drones">
+
+                <label class="check-item">
+                  <input type="checkbox" value="1028">
+                  <span>Drone 1028</span>
+                </label>
+
+                <label class="check-item">
+                  <input type="checkbox" value="1029">
+                  <span>Drone 1029</span>
+                </label>
+
+                <label class="check-item">
+                  <input type="checkbox" value="1030">
+                  <span>Drone 1030</span>
+                </label>
+
+                <label class="check-item">
+                  <input type="checkbox" value="1031">
+                  <span>Drone 1031</span>
+                </label>
+
+              </div>
+            </div>
+
+            <!-- 🔹 TIEMPO DE VUELO -->
+            <div class="form-group full">
+              <label>Tiempo de vuelo (minutos)</label>
+              <input type="number" id="tiempoVuelo">
+            </div>
+
+            <!-- 🔹 FOTO -->
+            <div class="form-group full">
+              <label>Foto de Evidencia</label>
+              <input type="file" id="foto" accept="image/*">
+            </div>
+
+            <!-- 🔹 BOTÓN -->
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      
+
+  </section>
+
+  <section class="panel">
+
+  <h2><i class="fa-solid fa-table"></i> Historial de Misiones</h2>
+
+  <!-- ✅ FILTROS (FUERA DE LA TABLA) -->
+  <div style="display:flex; gap:10px; margin-bottom:10px;">
+    <input type="date" id="filtroFecha">
+    <button id="btnHoy" class="btn">Hoy</button>
+    <button id="btnTodo" class="btn">Ver Todo</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Misión</th>
+        <th>Pilotos</th>
+        <th>Drones</th>
+        <th>Tiempo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody id="tablaMisiones"></tbody>
+  </table>
+
+</section>
+  <!-- =========================================================
+       📋 HISTORIAL DE MISIONES
+       ========================================================= -->
+  
+
+</div>
+
+
+<!-- =========================================================
+     📦 SCRIPTS
+     ========================================================= -->
+
+<!-- 🗺️ Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- HEATMAP -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<!-- TU SCRIPT -->
+<script src="./js/mapacalor.js"></script>
+
+<!-- 🧠 LÓGICA DEL MAPA -->
+<script src="./js/mapa.js"></script>
+<script src="./js/geocercas.js"></script>
+<script type="module" src="./js/botones.js"></script>
+<script type="module" src="./js/interfaz.js"></script>
+
+
+</body>
+</html>

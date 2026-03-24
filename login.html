@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Escuadrón de Drones</title>
+  <!-- ================= ESTILOS ================= -->
+  <link rel="stylesheet" href="login.css" />
+
+
+  
+</head>
+
+<body>
+
+  <div class="login-container">
+
+    <div class="logo">ESCUADRÓN DE DRONES</div>
+    <div class="sub">Sistema de gestión de misiones</div>
+
+    <input type="email" id="email" placeholder="Correo electrónico">
+    <input type="password" id="password" placeholder="Contraseña">
+
+    <button id="btnLogin">Ingresar</button>
+
+    <div id="loading" class="loading"></div>
+    <div id="error" class="error"></div>
+
+  </div>
+
+  <!-- =====================================================
+       🔐 SCRIPT LOGIN
+  ===================================================== -->
+  <script type="module" src="./login.js"></script>
+
+</body>
+</html>

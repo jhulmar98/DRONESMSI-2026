@@ -1,0 +1,126 @@
+/* =====================================================
+   🔥 LOGIN - ESTILO SOBRIO PROFESIONAL
+===================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #F5F7FA;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+
+  --primary: #1D4E89;       /* 🔵 único color fuerte */
+  --primary-dark: #163A6B;
+
+  --text: #1F2933;
+  --text-soft: #6B7280;
+
+  --error: #DC2626;
+}
+
+/* ================= BODY ================= */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--bg);
+}
+
+/* ================= CONTENEDOR ================= */
+.login-container {
+  width: 100%;
+  max-width: 360px;
+
+  background: var(--card);
+
+  padding: 30px;
+  border-radius: 10px;
+
+  border: 1px solid var(--border);
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+
+  text-align: center;
+}
+
+/* ================= TITULO ================= */
+.logo {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.sub {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 20px;
+}
+
+/* ================= INPUTS ================= */
+input {
+  width: 100%;
+  padding: 11px;
+  margin-bottom: 12px;
+
+  border-radius: 6px;
+  border: 1px solid var(--border);
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--primary);
+}
+
+/* ================= BOTÓN ================= */
+button {
+  width: 100%;
+  padding: 11px;
+
+  background: var(--primary);
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+/* ================= MENSAJES ================= */
+.error {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--error);
+  min-height: 16px;
+}
+
+.loading {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--primary);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 480px) {
+  .login-container {
+    margin: 0 15px;
+  }
+}

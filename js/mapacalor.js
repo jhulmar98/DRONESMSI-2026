@@ -12,7 +12,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ========================================
 async function cargarExcel() {
   try {
-    const response = await fetch("../puntosdecalor.xlsx");
+    const response = await fetch("./puntosdecalor.xlsx");
     const data = await response.arrayBuffer();
 
     const workbook = XLSX.read(data, { type: "array" });

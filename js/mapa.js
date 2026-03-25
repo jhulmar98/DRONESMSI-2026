@@ -4,7 +4,7 @@
 // 🎓 ICONO PERSONALIZADO COLEGIO
 // ===============================
 const iconoColegio = L.icon({
-  iconUrl: "../casa1.png",
+  iconUrl: "./casa1.png",
 
   iconSize: [30, 30],     // tamaño del icono
   iconAnchor: [15, 30],   // punto exacto del marcador

@@ -3,7 +3,7 @@
 // ========================================
 async function cargarGeocercas() {
   try {
-    const response = await fetch("../geocercas_msi.xlsx");
+    const response = await fetch("geocercas_msi.xlsx");
     const data = await response.arrayBuffer();
 
     const workbook = XLSX.read(data, { type: "array" });
